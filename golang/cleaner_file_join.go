@@ -29,6 +29,26 @@ we want to a join on name which results in
 
 */
 
+func decideReadingOrderForJoin(filePath1, filePath2 string) ([]string, error) {
+	f1size, err1 := getSize(filePath1)
+	if err1 != nil {
+		return nil, err1
+	}
+	f2size, err2 := getSize(filePath2)
+	if err2 != nil {
+		return nil, err2
+	}
+	readOrder := make([]string, 0)
+	if f1size > f2size {
+		//if we are memory optimised program then read small file first
+		readOrder = append(readOrder, filePath2, filePath1)
+	} else {
+		//if we are time optimised program, then read large file first #todo :) u can decide based on context of your problem
+		readOrder = append(readOrder, filePath1, filePath2)
+	}
+	return readOrder, nil
+}
+
 func getSize(filePath string) (int64, error) {
 	f, err := os.Stat(filePath)
 	if err != nil {
@@ -132,29 +152,17 @@ func processOutput(outputList []string) {
 
 func Join2filesCleanly(filePath1, filePath2 string) error {
 
-	f1size, err1 := getSize(filePath1)
-	if err1 != nil {
-		panic(err1.Error())
-	}
-	f2size, err2 := getSize(filePath2)
-	if err2 != nil {
-		panic(err2.Error())
-	}
-
-	fpath1 := filePath1
-	fpath2 := filePath2
-
-	if f1size > f2size {
-		fpath1 = filePath2
-		fpath2 = filePath1
-	}
-
-	dataMap, err := prepareDataMap(fpath1)
+	readingOrder, err := decideReadingOrderForJoin(filePath1, filePath2)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	if outputList, err := join(dataMap, fpath2); err != nil {
+	dataMap, err := prepareDataMap(readingOrder[0])
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if outputList, err := join(dataMap, readingOrder[1]); err != nil {
 		panic(err.Error())
 	} else {
 		processOutput(outputList)
