@@ -30,24 +30,28 @@ we want to a join on name which results in
 */
 func Join2files(filePath1, filePath2 string) error {
 
-	// get the size
-	f1, err := os.Stat(filePath1)
-	if err != nil {
-		return err
+	// get the num of records
+	file, _ := os.Open(filePath1)
+	fileScanner := bufio.NewScanner(file)
+	lineCount := 0
+	for fileScanner.Scan() {
+		lineCount++
 	}
-	f1Size := f1.Size()
+	f1Count := lineCount
 
-	// get the size
-	f2, err := os.Stat(filePath2)
-	if err != nil {
-		return err
+	// get the num of records
+	file, _ = os.Open(filePath2)
+	fileScanner = bufio.NewScanner(file)
+	lineCount = 0
+	for fileScanner.Scan() {
+		lineCount++
 	}
-	f2Size := f2.Size()
+	f2Count := lineCount
 
 	dataMap := make(map[string]string, 0)
 	outputList := make([]string, 0)
 
-	if f1Size <= f2Size {
+	if f1Count <= f2Count {
 		f, err := os.Open(filePath1)
 		if err != nil {
 			//

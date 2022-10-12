@@ -30,16 +30,16 @@ we want to a join on name which results in
 */
 
 func decideReadingOrderForJoin(filePath1, filePath2 string) ([]string, error) {
-	f1size, err1 := getSize(filePath1)
+	f1count, err1 := getNumRecords(filePath1)
 	if err1 != nil {
 		return nil, err1
 	}
-	f2size, err2 := getSize(filePath2)
+	f2count, err2 := getNumRecords(filePath2)
 	if err2 != nil {
 		return nil, err2
 	}
 	readOrder := make([]string, 0)
-	if f1size > f2size {
+	if f1count > f2count {
 		//if we are memory optimised program then read small file first
 		readOrder = append(readOrder, filePath2, filePath1)
 	} else {
@@ -49,12 +49,17 @@ func decideReadingOrderForJoin(filePath1, filePath2 string) ([]string, error) {
 	return readOrder, nil
 }
 
-func getSize(filePath string) (int64, error) {
-	f, err := os.Stat(filePath)
+func getNumRecords(filePath string) (int, error) {
+	file, err := os.Open(filePath)
 	if err != nil {
 		return -1, err
 	}
-	return f.Size(), nil
+	fileScanner := bufio.NewScanner(file)
+	lineCount := 0
+	for fileScanner.Scan() {
+		lineCount++
+	}
+	return lineCount, nil
 }
 
 func locateNameColumn(line string) int {

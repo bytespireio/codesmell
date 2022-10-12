@@ -2,9 +2,9 @@ package golang
 
 import "testing"
 
-func TestGetSize(t *testing.T) {
-	if size, _ := getSize("../a.txt"); size <= 0 {
-		t.Error("a.txt has size > 0")
+func TestGetNumRecords(t *testing.T) {
+	if count, _ := getNumRecords("../a.txt"); count <= 0 {
+		t.Error("a.txt should have count > 0")
 	}
 }
 
