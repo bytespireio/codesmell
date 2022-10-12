@@ -20,6 +20,7 @@ func TestDecideReadingOrderForJoin(t *testing.T) {
 		t.Errorf("expected smaller file: %v to read first but got %v", "../b.txt", order[0])
 	}
 }
+
 func TestPrepareDataMap(t *testing.T) {
 	if dataMap, err := prepareDataMap("../a.txt"); err != nil {
 		t.Error(err)
@@ -29,6 +30,18 @@ func TestPrepareDataMap(t *testing.T) {
 		}
 		if dataMap["vishnu"] != "1" {
 			t.Errorf("expected datamap value for key: vishnu to be 1, got %v", dataMap["vishnu"])
+		}
+	}
+}
+
+func TestGetIntersection(t *testing.T) {
+	dataMap, _ := prepareDataMap("../a.txt")
+	output, err := getIntersection(dataMap, "../b.txt")
+	if err != nil {
+		t.Errorf("test failed" + err.Error())
+	} else {
+		if len(output) != 2 {
+			t.Errorf("expected join to give 2 records, got %v", len(output))
 		}
 	}
 }

@@ -22,7 +22,7 @@ file 2:
 vishnu,senior data engineer
 mitesh,principal engineer
 
-we want to a join on name which results in
+we want to a getIntersection on name which results in
 
 1,vishnu,senior data engineer
 2,mitesh,principal engineer
@@ -110,7 +110,7 @@ func prepareDataMap(filePath string) (map[string]string, error) {
 	return dataMap, nil
 }
 
-func join(dataMap map[string]string, otherFilePath string) ([]string, error) {
+func getIntersection(dataMap map[string]string, otherFilePath string) ([]string, error) {
 	f, err := os.Open(otherFilePath)
 	if err != nil {
 		return nil, err
@@ -162,12 +162,15 @@ func Join2filesCleanly(filePath1, filePath2 string) error {
 		panic(err.Error())
 	}
 
-	dataMap, err := prepareDataMap(readingOrder[0])
+	file1 := readingOrder[0]
+	file2 := readingOrder[1]
+
+	dataMap, err := prepareDataMap(file1)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	if outputList, err := join(dataMap, readingOrder[1]); err != nil {
+	if outputList, err := getIntersection(dataMap, file2); err != nil {
 		panic(err.Error())
 	} else {
 		processOutput(outputList)
